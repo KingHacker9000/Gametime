@@ -1,0 +1,414 @@
+#Logo {
+    color: black;
+    font-family: 'Pacifico', cursive;
+    font-size: 3em;
+    padding: 10px 20px 20px 20px;
+    float: left;
+}
+
+#Logo0 {
+    color: cornflowerblue;
+}
+
+#nav {
+    float: right;
+    width: 30%;
+    margin-right: 20px;
+}
+
+.nav-opt {
+    float: left;
+    font-family: 'Bai Jamjuree', sans-serif;
+    width: 50%;
+    font-size: 1.5em;
+    color: #616899;
+    text-align: center;
+    padding: 1.5em 0;
+}
+
+.nav-opt:hover {
+    color: #233093;
+}
+
+header {
+    background-color: rgb(177, 250, 226);
+    overflow: auto
+}
+
+main {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    min-height: 57vh;
+    font-family: 'Lusitana', serif;
+    padding: 10px;
+}
+
+footer {
+
+    background-color: #3846b3c1;
+    overflow: auto;
+    border-top: 2px solid #224664;
+    color: #393939;
+    margin-top: auto;
+    width: 100%;
+}
+
+#end {
+    float: left;
+    padding: 2em;
+}
+
+#Logo-footer{
+    border-right: 2px solid #2246645f;
+    font-family: 'Pacifico', cursive;
+    font-size: 1.2em;
+    float: left;
+    padding: 1em;
+}
+
+#Logo-footer a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+
+#copyright {
+    float: left;
+    font-size: 1.2em;
+    padding: 1em;
+}
+
+#links-box-footer {
+    float: right;
+    padding: 2em;
+    height: 100%;
+}
+
+.link-footer{
+    padding: 1.2em;
+    margin-right: 20px;
+    float: left;
+}
+
+.link-footer a{
+    color: rgb(39, 39, 60);
+    text-decoration: none;
+}
+
+
+#login-container {
+    width: 40%;
+    background-color: rgba(145, 228, 255, 0.562);
+    margin: auto;
+    padding: 10px;
+    margin: 5% auto;
+    border-radius: 15px;
+    border: 1px solid #61689975;
+}
+
+.input-holder {
+    overflow: hidden;
+    position: relative;
+    margin: 30px 20px;
+}
+
+.input-holder input {
+    width: 100%;
+    height: 100%;
+    color: #616899;
+    padding-top: 20px;
+    border: none;
+    outline: none;
+}
+
+.input-holder label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    border-bottom: 1px solid black;
+}
+
+.input-holder label::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-bottom: 2px solid cornflowerblue;
+    transform: translateX(-100%);
+    transition: all 0.3s ease;
+}
+
+.content-span {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    transition: all 0.3s ease;
+}
+
+.input-holder input:focus + label .content-span, .input-holder input:valid + label .content-span{
+    transform: translateY(-90%);
+    font-size: 14px;
+    color: cornflowerblue;
+}
+
+.input-holder input:focus + label::after,  .input-holder input:valid + label::after{
+    transform: translateX(0%);
+}
+
+form button {
+    width: 40%;
+    height: 2em;
+    background-color: #616899;
+    color: white;
+    margin: auto;
+    outline: none;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    margin-top: 50px;
+}
+
+#login-text {
+    color: #233093;
+    font-size: 20px;
+    font-family: 'Lusitana', serif;
+    text-align: center;
+    padding-top: 20px;
+}
+
+#signup-link {
+    width: 40%;
+    margin: auto;
+    text-align: center;
+}
+
+#signup-link a {
+    color: #808080;
+    text-align: center;
+    text-decoration: none;
+}
+
+#error {
+    color: red;
+    text-align: center;
+}
+
+#creator-text {
+    color: #233093;
+    font-size: 40px;
+    font-family: 'Lusitana', serif;
+    text-align: center;
+    padding-top: 20px;
+}
+
+#creator-form {
+    width: 80%;
+    margin: auto;
+}
+
+#creator-form form div {
+    margin-top: 15px;
+}
+
+
+.radio-holder div {
+    padding-left: 1em;
+    float: left;
+}
+
+.drop-holder {
+    padding: 0.5em 1em 0.5em 1em;
+}
+
+#teams-form {
+    background-color: rgba(145, 228, 255, 0.562);
+    border-radius: 15px;
+}
+
+.team {
+    padding: 1em;
+}
+
+.player-form {
+    background-color: rgba(81, 151, 174, 0.562);
+    border-radius: 15px;
+}
+
+.player {
+    padding: 1em;
+}
+
+.header-rows {
+    font-family: 'Bai Jamjuree', sans-serif;
+    font-size: 2em;
+    color: #616899;
+}
+
+.match-rows {
+    display: block;
+    padding: 0 1em;
+    border-spacing: 20px 10px;
+    width: 100%m;
+    overflow-x:scroll;
+}
+
+.match-card {
+    min-height: 35vh;
+    min-width: 45vh;
+    border: rgba(116, 92, 233, 0.651) 1px solid;
+    border-radius: 15px;
+    padding-bottom: 20px;
+    background-color: #68ffcda8;
+    display: table-cell;
+    padding: 0 1em;
+    position: relative;
+}
+
+.match-card a {
+    text-decoration: none;
+}
+
+.match-click {
+    padding: 10px;
+    min-height: 35vh;
+    min-width: max-content;
+}
+
+.tournament-name-tc {
+    text-decoration: none;
+    font-size: 3em;
+    color: #ffca1c;
+    text-align: center;
+    border-bottom: #ffca1c 1px solid;
+    height: 10vh;
+}
+
+
+.details-tc {
+    border-top: #949494 1px dashed;
+    height: 5vh;
+}
+
+
+.privacy-tc {
+    float: left;
+    color: blueviolet;
+}
+
+.type-tc {
+    float: right;
+    color: blueviolet;
+}
+
+.image-tc {
+    display: block;
+    width: 25vh;
+    height: 25vh;
+    margin: 10px auto;
+}
+
+.container-rows {
+    margin-bottom: 2em;
+}
+
+#tournament-title {
+    color: #993aff;
+    font-size: 4em;
+    text-align: center;
+    margin: auto;
+}
+
+.team-logo {
+    position: absolute;
+    left: 0;
+}
+
+.team-name {
+    position: absolute;
+    right: 0;
+}
+
+.small-team-logo {
+    width: 5vh;
+    height: 5vh;
+}
+
+.team-drop {
+    position: relative;
+}
+
+.tournament-name-mc {
+    size: 0.5em;
+    text-align: center;
+    color: #808080;
+    margin: auto;
+}
+
+.logo-box-mc {
+    display: table;
+}
+
+.logo-mc, .vs {
+    display: table-cell;
+}
+
+.logo-mc img{
+    width: 15vh;
+}
+
+.logo-mc {
+    border: #ffca1c 2px solid;
+    border-radius: 2px;
+}
+
+.vs {
+    color: #993aff;
+    font-size: 2em;
+}
+
+.score-mc {
+    font-size: 3em;
+    text-align: center;
+    word-spacing: 1em;
+    color: cornflowerblue;
+    -webkit-text-stroke: 1px rgba(67, 0, 119, 0.466);
+}
+
+.details-mc {
+    border-top: #949494 1px dashed;
+    height: 5vh;
+    display: table;
+    width: 100%;
+}
+
+.result-mc, .time-mc {
+    display: table-cell;
+}
+
+.result-mc {
+    text-align: left;
+    color: #ff7700;
+}
+
+.time-mc {
+    text-align: right;
+    color: rgb(255, 74, 74);
+}
+
+.match-name-tc {
+    text-align: center;
+    color: #ffca1c;
+    font-size: 2em;
+    word-spacing: 0.75em;
+}
+
+.table-img {
+    width: 10vh;
+    margin-right: 5vh;
+}

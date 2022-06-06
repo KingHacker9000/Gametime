@@ -1,0 +1,42 @@
+{% extends 'plainBase.html' %}
+
+{% block title %} Signup {% endblock %}
+
+
+{% block body %}
+    <div id="login-container">
+        <div id="login-text">New Account</div>
+        <div id="login-form">
+            <form action="/signup" method="post">
+                
+                <div class="input-holder">
+                    <input type="text" name="username" required autocomplete="off">
+                    <label for="username" class="content-label"><span class="content-span">Username</span></label>
+                </div>
+                
+                <div class="input-holder">
+                    <input type="password" name="password" required autocomplete="off">
+                    <label for="password" class="content-label"><span class="content-span">Password</span></label>    
+                </div>
+
+                <div class="input-holder">
+                    <input type="text" name="organisation_code" required autocomplete="off" value="{{code}}">
+                    <label for="organisation_code" class="content-label"><span class="content-span">Organisation Code</span></label>    
+                </div>
+                        
+                <button type="submit">Sign Up</button>
+
+                <span id="error">
+                    {{error}}
+                </span>
+            </form>
+        </div>
+    </div>
+
+    <div id="signup-link">
+        <a href="/registerOrg">
+            Registering a new Organisation?
+        </a>
+    </div>
+{% endblock %}
+        

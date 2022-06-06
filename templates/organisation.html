@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %} My Organisation {% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block body %}
+
+    <div class="container-rows">
+        <div class="header-rows">My Tournaments</div>
+        <div class="match-rows">
+            <div class="match-card">
+                <a href="/Tournament/new">
+                    <div class="match-click">
+                        <div class="tournament-name-tc">
+                            New Tournament
+                        </div>
+                        <div>
+                                <img class="image-tc" src="{{ url_for('static',filename='images/plus.png') }}" alt="">
+                        </div>
+                    </div>
+                </a>    
+            </div>
+            {% for tour in Tournaments%}
+                <div class="match-card">
+                    <a href="/Tournament?id={{tour['Tournament_ID']}}">
+                        <div class="match-click">
+                            <div class="tournament-name-tc">
+                                {{tour['Name']}}
+                            </div>
+                            <div>
+                                {% if tour['Game_Type'] == 'Football/Soccer' %}
+                                    <img class="image-tc" src="{{ url_for('static',filename='images/football.png') }}" alt="">
+                                {% endif %}
+
+                                {% if tour['Game_Type'] == 'Cricket' %}
+                                    <img class="image-tc" src="{{ url_for('static',filename='images/cricket.png') }}" alt="">
+                                {% endif %}
+
+                                {% if tour['Game_Type'] == 'Basketball' %}
+                                    <img class="image-tc" src="{{ url_for('static',filename='images/basketball.png') }}" alt="">
+                                {% endif %}
+
+                                {% if tour['Game_Type'] == 'Baseball' %}
+                                    <img class="image-tc" src="{{ url_for('static',filename='images/baseball.png') }}" alt="">
+                                {% endif %}
+
+                                {% if tour['Game_Type'] == 'Swimming' %}
+                                    <img class="image-tc" src="{{ url_for('static',filename='images/swimming.png') }}" alt="">
+                                {% endif %}
+
+                                {% if tour['Game_Type'] == 'Track & Field' %}
+                                    <img class="image-tc" src="{{ url_for('static',filename='images/running.png') }}" alt="">
+                                {% endif %}
+
+                                {% if tour['Game_Type'] == 'Kho-Kho' %}
+                                    <img class="image-tc" src="{{ url_for('static',filename='images/khokho.png') }}" alt="">
+                                {% endif %}
+
+                                {% if tour['Game_Type'] == 'Badminton' %}
+                                    <img class="image-tc" src="{{ url_for('static',filename='images/badminton.png') }}" alt="">
+                                {% endif %}
+
+                            </div>
+                            <div class="details-tc">
+                                <span class="privacy-tc">
+                                    {{ tour['Privacy'] }}
+                                </span>
+                                <span class="type-tc">
+                                    {{ tour['Game_Type'] }}
+                                </span>
+                            </div>
+                        </div>
+                    </a>    
+                </div>    
+            {% endfor %}
+        </div>
+    </div>
+    <br>
+{% endblock %}

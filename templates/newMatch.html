@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %} Tournament Creator {% endblock %}
+
+{% block body %}
+
+<div id="creator-container">
+    <div id="creator-text">Add Match Results</div>
+    <div id="creator-form">
+        <form action="/Match/new" enctype="multipart/form-data" method="post">
+            
+            <div class="drop-holder">
+                <select name="Team_One" class="form-select" id="t1">
+                    <option value="" selected>First Team</option>
+                    {% for team in teamsList %}
+                        <option value="{{team['Name']}}~{{team['Team_ID']}}">
+                            <div class="team-drop">
+                                <div class="team-logo">
+                                    <img class="small-team-logo" src="{{ url_for('static',filename='images/football.png') }}" alt="">
+                                </div>
+                                <div class="team-name">
+                                    {{team['Name']}}
+                                </div> 
+                            </div>
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="drop-holder">
+                <select name="Team_Two" class="form-select" id="t2">
+                    <option value="" selected>Second Team</option>
+                    {% for team in teamsList %}
+                        <option value="{{team['Name']}}~{{team['Team_ID']}}">
+                            <div class="team-drop">
+                                <div class="team-logo">
+                                    <img class="small-team-logo" src="data:image/png;base64,{{ team['Logo'] }}">
+                                </div>
+                                <div class="team-name">
+                                    {{team['Name']}}
+                                </div> 
+                            </div>
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="input-holder">
+                <input type="text" name="score" required autocomplete="off">
+                <label for="score" class="content-label"><span class="content-span">Score</span></label>
+            </div>
+
+            <div class="drop-holder">
+                <select name="results" id="results" class="form-select">
+                    <option value="" selected>Game Results</option>
+                </select>
+            </div>
+
+            <div class="input-holder">
+                <input type="text" name="description" required autocomplete="off">
+                <label for="description" class="content-label"><span class="content-span">Description</span></label>
+            </div>
+
+            <div>
+                <input type="hidden" name='id' value="{{T_ID}}">
+            </div>
+
+            <div>
+                <button type="submit">Create</button>
+            </div>     
+            
+
+            <span id="error">
+                {{error}}
+            </span>
+        </form>
+    </div>
+</div>
+
+<script>
+    
+    r = document.getElementById('results')
+
+    t1 = document.getElementById('t1')
+    t1.addEventListener('change', rChange)
+    t2 = document.getElementById('t2')
+    t2.addEventListener('change', rChange)
+
+    function rChange() {
+        team1Name = t1.value.split("~")[0]
+        team2Name = t2.value.split("~")[0]
+
+        w = team1Name + " Won"
+        l = team2Name + " Won"
+        d = "Draw"
+
+        r.innerHTML = `<option value="" selected>Game Results</option>
+        <option value="${w}" selected>${w}</option>
+        <option value="${l}" selected>${l}</option>
+        <option value="${d}" selected>${d}</option>`
+    }
+
+</script>
+{% endblock %}

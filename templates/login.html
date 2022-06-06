@@ -1,0 +1,37 @@
+{% extends 'plainBase.html' %}
+
+{% block title %} Login {% endblock %}
+
+
+{% block body %}
+    <div id="login-container">
+        <div id="login-text">Login to your Account</div>
+        <div id="login-form">
+            <form action="/login" method="post">
+                
+                <div class="input-holder">
+                    <input type="text" name="username" required autocomplete="off">
+                    <label for="username" class="content-label"><span class="content-span">Username</span></label>
+                </div>
+                
+                <div class="input-holder">
+                    <input type="password" name="password" required autocomplete="off">
+                    <label for="password" class="content-label"><span class="content-span">Password</span></label>    
+                </div>
+                        
+                <button type="submit">Login</button>
+
+                <span id="error">
+                    {{error}}
+                </span>
+            </form>
+        </div>
+    </div>
+
+    <div id="signup-link">
+        <a href="/signup">
+            Sign up a New Account...
+        </a>
+    </div>
+{% endblock %}
+        

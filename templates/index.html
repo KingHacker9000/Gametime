@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block body %}
+
+    <div class="container-rows">
+        <div class="header-rows">Newest</div>
+        <div class="match-rows">
+            {% for newMatch in newMatches%}
+                <div class="match-card">
+                    <div class="tournament-name-mc">
+                        {{newMatch['Tournament_Name']}}
+                    </div>
+                    <div class="team-mc">
+                        <div class="logo-box-mc">
+                            <div class="logo-mc">
+                                <img src="data:image/png;base64,{{ newMatch['t1']['Logo'] }}">
+                            </div>
+                            <div class="vs">V/S</div>
+                            <div class="logo-mc">
+                                <img src="data:image/png;base64,{{ newMatch['t2']['Logo'] }}">
+                            </div>
+                        </div>
+                        <div class="score-mc">
+                            {{newMatch['Score']}}
+                        </div>
+                    </div>
+                    <div class="details-mc">
+                        <div class="result-mc">
+                            {{ newMatch['Result'] }}
+                        </div>
+                        <div class="time-mc" id="time">
+                            {{ newMatch['Time'] }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        times = document.getElementsByClassName('time-mc')
+
+        for (let i = 0; i < times.length; i++) {
+            const element = times[i];
+
+            s = (new Date(parseInt(element.innerText))).toString().split(" ")
+            element.innerHTML = ''
+            for (let i = 1; i < 4; i++) {
+                element.innerHTML += s[i] + " " 
+            }
+            element.innerHTML += ", " + s[4]
+        }
+        
+    </script>
+
+{% endblock %}

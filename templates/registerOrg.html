@@ -1,0 +1,27 @@
+{% extends 'plainBase.html' %}
+
+{% block title %} Organisation Registration {% endblock %}
+
+
+{% block body %}
+    <div id="login-container">
+        <div id="login-text">New Organisation</div>
+        <div id="login-form">
+            <form action="/registerOrg" method="post">
+                
+                <div class="input-holder">
+                    <input type="text" name="name" required autocomplete="off">
+                    <label for="name" class="content-label"><span class="content-span">Organisation Name</span></label>
+                </div>
+                        
+                <button type="submit">Sign Up</button>
+
+                <span id="error">
+                    {{error}}
+                </span>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+        

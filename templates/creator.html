@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %} Tournament Creator {% endblock %}
+
+{% block body %}
+
+<div id="creator-container">
+    <div id="creator-text">Tournament Creator</div>
+    <div id="creator-form">
+        <form action="/Tournament/new" enctype="multipart/form-data" method="post">
+            
+            <div class="input-holder">
+                <input type="text" name="name" required autocomplete="off">
+                <label for="name" class="content-label"><span class="content-span">Tournament Name</span></label>
+            </div>
+
+            <div class="input-holder">
+                <input type="text" name="details" required autocomplete="off">
+                <label for="details" class="content-label"><span class="content-span">Tournament About</span></label>
+            </div>
+
+            <div class="drop-holder">
+                <select name="type" class="form-select">
+                    <option value="" selected>Type of Game</option>
+                    {% for type in types %}
+                        <option value="{{type['Game_ID']}}">{{type['Game_Type']}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="radio-holder">
+                <div>
+                    Privacy:
+                </div>
+                <div>
+                    <input class="form-check-input" type="radio" name="privacy" value="Public">
+                    <label for="count" class="form-check-label"><span>Public</span></label>
+                </div>
+                <div>
+                    <input class="form-check-input" type="radio" name="privacy" value="Private">
+                    <label for="count" class="form-check-label"><span>Private</span></label>
+                </div>
+            </div>
+
+            <br><br>
+
+            <div class="input-holder">
+                <input type="number" id="counter" name="count" value="1" required>
+                <label for="count" class="content-label"><span class="content-span">Number of Teams</span></label>
+            </div>
+
+            <div id="teams-form">
+
+                <div class="team">
+                    <div id="team-count">Team #1</div>
+                    <div class="input-holder">
+                        <input type="text" name="team-1-name" required autocomplete="off">
+                        <label for="team-1-name" class="content-label"><span class="content-span">Name of Team</span></label>
+                    </div>
+                    <div class="mb-3 team">
+                        <label for="team-1-logo" class="form-label">Team Logo</label>
+                        <input class="form-control" type="file" name="team-1-logo">
+                    </div>
+                    <div class="input-holder">
+                        <input type="number" id="counter-1" name="team-1-count" required>
+                        <label for="team-1-count" class="content-label"><span class="content-span">Number of Players</span></label>
+                    </div>
+                    <div class="player-form">
+                        <div class="player">
+                            <div id="team-count">Player #1</div>
+                            <div class="input-holder">
+                                <input type="text" name="team-1-player-1-name" required autocomplete="off">
+                                <label for="team-1-player-1-name" class="content-label"><span class="content-span">Name of Player</span></label>
+                            </div>
+                            <div class="input-holder">
+                                <input type="text" name="team-1-player-1-details" required autocomplete="off">
+                                <label for="team-1-player-1-details" class="content-label"><span class="content-span">Player Details</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div>
+                <button type="submit">Create</button>
+            </div>     
+            
+
+            <span id="error">
+                {{error}}
+            </span>
+        </form>
+    </div>
+</div>
+
+<script>
+    let counter = document.getElementById("counter");
+    let count = -1;
+
+    counter.addEventListener("change", teamForm);
+
+    function teamForm(e) 
+    {
+        
+        count = counter.value;
+        document.getElementById("teams-form").innerHTML = "";
+            
+        for (let i = 0; i < count; i++) {
+
+            document.getElementById("teams-form").innerHTML += `
+            <div class="team">
+                    <div id="team-count">Team #`+ (i+1).toString() + `</div>
+                    <div class="input-holder">
+                        <input type="text" name="team-`+ (i+1).toString() + `-name" required autocomplete="off">
+                        <label for="team-`+ (i+1).toString() + `-name" class="content-label"><span class="content-span">Name of Team</span></label>
+                    </div>
+                    <div class="mb-3 team">
+                        <label for="team-`+ (i+1).toString() + `-logo" class="form-label">Team Logo</label>
+                        <input class="form-control" type="file" name="team-`+ (i+1).toString() + `-logo">
+                    </div>
+                    <div class="input-holder">
+                        <input type="number" id="counter-`+ (i+1).toString() + `" name="team-`+ (i+1).toString() + `-count" required>
+                        <label for="team-`+ (i+1).toString() + `-count" class="content-label"><span class="content-span">Number of Players</span></label>
+                    </div>
+                    <div class="player-form" id="team-`+ (i+1).toString() + `-playerform">
+
+                    </div>
+                </div>
+            `;
+        }
+
+        for (let j = 0; j < count; j++) {
+            document.getElementById("counter-" + (j+1).toString()).addEventListener('change', playerForm);
+        }
+    }
+
+    function playerForm(e)
+    {
+        j = e.target.id[8]
+
+        count = document.getElementById("counter-" + j).value;
+        document.getElementById("team-" + j + "-playerform").innerHTML = "";
+
+        for (let i = 0; i < count; i++) {
+
+            document.getElementById("team-" + j + "-playerform").innerHTML += `
+                <div class="player">
+                    <div id="team-count">Player #` + (i+1).toString() + `</div>
+                    <div class="input-holder">
+                        <input type="text" name="team-`+ j +`-player-` + (i+1).toString() + `-name" required autocomplete="off">
+                        <label for="team-`+ j +`-player-` + (i+1).toString() + `-name" class="content-label"><span class="content-span">Name of Player</span></label>
+                    </div>
+                    <div class="input-holder">
+                        <input type="text" name="team-`+ j +`-player-` + (i+1).toString() + `-details" required autocomplete="off">
+                        <label for="team-`+ j +`-player-` + (i+1).toString() + `-details" class="content-label"><span class="content-span">Player Details</span></label>
+                    </div>
+                </div>
+            `
+        }
+    }
+
+    
+
+</script>
+{% endblock %}

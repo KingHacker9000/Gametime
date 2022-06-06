@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %} My Organisation {% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block body %}
+
+    <div id="tournament-title">
+        {{Tournament['Name']}}
+    </div>
+
+    <div class="container-rows">
+        <div class="header-rows">Just Out</div>
+        <div class="match-rows">
+            <div class="match-card">
+                <a href="/Match/new?id={{Tournament['Tournament_ID']}}">
+                    <div class="match-click">
+                        <div class="tournament-name-tc">
+                            Add Match
+                        </div>
+                        <div>
+                                <img class="image-tc" src="{{ url_for('static',filename='images/plus.png') }}" alt="">
+                        </div>
+                    </div>
+                </a>    
+            </div>
+            {% for newMatch in newMatches%}
+                <div class="match-card">
+                    <div class="match-name-tc">
+                        {{newMatch['t1']['Name']}} | {{newMatch['t2']['Name']}}
+                    </div>
+                    <div class="team-mc">
+                        <div class="logo-box-mc">
+                            <div class="logo-mc">
+                                <img src="data:image/png;base64,{{ newMatch['t1']['Logo'] }}">
+                            </div>
+                            <div class="vs">V/S</div>
+                            <div class="logo-mc">
+                                <img src="data:image/png;base64,{{ newMatch['t2']['Logo'] }}">
+                            </div>
+                        </div>
+                        <div class="score-mc">
+                            {{newMatch['Score']}}
+                        </div>
+                    </div>
+                    <div class="details-mc">
+                        <div class="result-mc">
+                            {{ newMatch['Result'] }}
+                        </div>
+                        <div class="time-mc" id="time">
+                            {{ newMatch['Time'] }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <br>
+    <div class="sb-container">
+        <div class="header-rows">Just Out</div>
+        <div class="sb">
+            <table class="table table-sm table-dark">
+                <tr class="table-info">
+                    <th>Sno.</th>
+                    <th>Team</th>
+                    <th>Score</th>
+                    <th>Wins</th>
+                    <th>Losses</th>
+                    <th>Draws</th>
+                    <th>Matches Played</th>
+                </tr>
+
+                {% for team in teamList %}
+                    <tr class="table-light">
+                        <td class="table-sno"></td>
+                        <td class="table-team">
+                            <a href="/Team?id={{team['Team_ID']}}">
+                                <img class="table-img" src="data:image/png;base64,{{ team['Logo'] }}">
+                                {{team['Name']}}
+                            </a>
+                        </td>
+                        <td>{{team['Score']}}</td>
+                        <td>{{team['Wins']}}</td>
+                        <td>{{team['Losses']}}</td>
+                        <td>{{team['Draws']}}</td>
+                        <td>{{team['matchesPlayed']}}</td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+
+        </div>
+    </div>
+
+    <script>
+        times = document.getElementsByClassName('time-mc')
+
+        for (let i = 0; i < times.length; i++) {
+            const element = times[i];
+
+            s = (new Date(parseInt(element.innerText))).toString().split(" ")
+            element.innerHTML = ''
+            for (let i = 1; i < 4; i++) {
+                element.innerHTML += s[i] + " " 
+            }
+            element.innerHTML += ", " + s[4]
+        }
+
+        snos = document.getElementsByClassName('table-sno')
+        for (let i = 1; i <= snos.length; i++) {
+            const element = snos[i-1];
+            element.innerHTML = i
+        }
+        
+    </script>
+{% endblock %}
