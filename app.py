@@ -40,9 +40,11 @@ def check_args(*args):
 def index():
 
     if session.get("Organisation_ID") is not None:
+        # "SELECT * FROM Tournaments WHERE Privacy=? OR Organisation_ID=?", ('public', session.get("Organisation_ID"))
         tournaments, status = db.execute("SELECT * FROM Tournaments WHERE Privacy=? OR Organisation_ID=?", ('public', session.get("Organisation_ID")))
             
     else:
+        # "SELECT * FROM Tournaments WHERE Privacy=?", ('public',)
         tournaments, status = db.execute("SELECT * FROM Tournaments WHERE Privacy=?", ('public',))
 
     if tournaments is None:
@@ -56,6 +58,7 @@ def index():
     tourIDs.append(timern)
 
     print()
+    #"SELECT * FROM Matches WHERE Tournament_ID IN (" + "?, " * (len(tourIDs)-2) + " ?) AND Time < ? ORDER BY Time DESC;", tourIDs
     matches, status = db.execute("SELECT * FROM Matches WHERE Tournament_ID IN (" + "?, " * (len(tourIDs)-2) + " ?) AND Time < ? ORDER BY Time DESC;", tourIDs)
 
     if matches is None:
@@ -69,8 +72,11 @@ def index():
         gameID = match['Game_ID']
         tourID = match['Tournament_ID']
 
+        # "SELECT * FROM Teams WHERE Team_ID=?", (t1,)
         Team_One = db.execute("SELECT * FROM Teams WHERE Team_ID=?", (t1,))[0][0]
+        # "SELECT * FROM Teams WHERE Team_ID=?", (t2,)
         Team_Two = db.execute("SELECT * FROM Teams WHERE Team_ID=?", (t2,))[0][0]
+        # "SELECT * FROM Tournaments WHERE Tournament_ID=?", (tourID,)
         Tournament = db.execute("SELECT * FROM Tournaments WHERE Tournament_ID=?", (tourID,))[0][0]["Name"]
             
         Result = match['Result']
@@ -110,6 +116,7 @@ def login():
     if not check_args(password, request.form.get("username")): return render_template("login.html", error=error(401, "Missing Password or Username"))
 
     # Query database for username
+    # "SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),)
     rows, status = db.execute("SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
 
     if rows is None:
@@ -132,6 +139,7 @@ def signUp():
     if request.method == "GET":
         Code = [{"Organisation_Code": ""}]
         if session.get("Organisation_ID") is not None:
+            # "SELECT * FROM Organisations WHERE Organisation_ID=?", (session.get("Organisation_ID"),)
             Code, status = db.execute("SELECT * FROM Organisations WHERE Organisation_ID=?", (session.get("Organisation_ID"),))
         session.clear()
         return render_template("signup.html", code=Code[0]["Organisation_Code"])
@@ -143,17 +151,21 @@ def signUp():
     if not check_args(username, password, organisationCode):
         return render_template("signup.html", error=error(401, "Missing Arguments"))
 
+    # "SELECT * FROM Organisations WHERE Organisation_Code = ?", (organisationCode,)
     orgRow, status = db.execute("SELECT * FROM Organisations WHERE Organisation_Code = ?", (organisationCode,))
     if orgRow is None or len(orgRow) < 1:
         return render_template("signup.html", error=error(401, "Invalid Organisation Code"))
 
+    # "SELECT * FROM Users WHERE Username=?", (username,)
     usernameRow, status = db.execute("SELECT * FROM Users WHERE Username=?", (username,))
     if usernameRow is not None and len(usernameRow) > 0:
         return render_template("signup.html", error=error(401, "Username Has Already Been taken"))
 
     hash = generate_password_hash(password)
+    # "INSERT INTO Users (Username, User_Password, Organisation_ID) VALUES (?, ?, ?)", (username, hash, orgRow[0]["Organisation_ID"])
     db.execute("INSERT INTO Users (Username, User_Password, Organisation_ID) VALUES (?, ?, ?)", (username, hash, orgRow[0]["Organisation_ID"]))
 
+    # "SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),)
     rows, status = db.execute("SELECT * FROM Users WHERE Username = ?", (request.form.get("username"),))
     
     session.clear()
@@ -174,19 +186,23 @@ def registerOrg():
     if not check_args(name):
         return render_template("registerOrg.html", error=error(401, "Missing Arguments"))
 
+    # "SELECT * FROM Organisations WHERE Organisation_Name=?", (name,)
     Row, status = db.execute("SELECT * FROM Organisations WHERE Organisation_Name=?", (name,))
     if Row is not None and len(Row) > 0:
         return render_template("registerOrg.html", error=error(401, "Name Has Already Been taken"))
 
     Code = random.randint(100000,999999)
 
+    # "SELECT * FROM Organisations WHERE Organisation_Code=?", (Code,)
     orgRows, status = db.execute("SELECT * FROM Organisations WHERE Organisation_Code=?", (Code,))
 
     while orgRows is not None and len(orgRows) > 0:
         Code = random.randint(100000, 999999)
 
+    # "INSERT INTO Organisations (Organisation_Name, Organisation_Code) VALUES (?, ?)", (name, Code)
     db.execute("INSERT INTO Organisations (Organisation_Name, Organisation_Code) VALUES (?, ?)", (name, Code))
 
+    # "SELECT * FROM Organisations WHERE Organisation_Code = ?", (Code,)
     rows, status = db.execute("SELECT * FROM Organisations WHERE Organisation_Code = ?", (Code,))
     session["Organisation_ID"] = rows[0]["Organisation_ID"]
 
@@ -196,6 +212,7 @@ def registerOrg():
 @app.route("/Tournament/new", methods=["GET", "POST"])
 @login_required
 def createTournament():
+    # "SELECT * FROM Games;"
     Types, status = db.execute("SELECT * FROM Games;")
 
     if request.method == "GET":
@@ -237,21 +254,28 @@ def createTournament():
             "players": playerData
         })
 
+    # "SELECT * FROM Games WHERE Game_ID=?", (gameType,)
     if db.execute("SELECT * FROM Games WHERE Game_ID=?", (gameType,))[0] is None:
         return render_template("creator.html", types=Types, error=error(401, "Invalid Arguments"))
 
     # Checked All Data Clean, Can now Add it to Database
 
     # Tournament Add
+    # "INSERT INTO Tournaments (Name, Organisation_ID, Privacy, Details, Game_ID) VALUES (?,?,?,?,?)", (name,session.get("Organisation_ID"), privacy, details, gameType)
     db.execute("INSERT INTO Tournaments (Name, Organisation_ID, Privacy, Details, Game_ID) VALUES (?,?,?,?,?)", (name,session.get("Organisation_ID"), privacy, details, gameType))
 
+    # "SELECT  * FROM Tournaments WHERE Name=? AND Organisation_ID=?", (name,session.get("Organisation_ID"))
     tourID = db.execute("SELECT  * FROM Tournaments WHERE Name=? AND Organisation_ID=?", (name,session.get("Organisation_ID")))[0][0]['Tournament_ID']
+    
     # Teams Add
     for team in Data:
+        # "INSERT INTO Teams (Name, Game_ID, Organisation_ID, Logo, Tournament_ID, Score) VALUES (?,?,?,?,?,0)", (team['name'], gameType, session.get("Organisation_ID"), team['logo'], tourID)
         db.execute("INSERT INTO Teams (Name, Game_ID, Organisation_ID, Logo, Tournament_ID, Score) VALUES (?,?,?,?,?,0)", (team['name'], gameType, session.get("Organisation_ID"), team['logo'], tourID))
 
+        # "SELECT * FROM Teams WHERE Name=? AND Organisation_ID=?", (team['name'], session.get("Organisation_ID"))
         teamID = db.execute("SELECT * FROM Teams WHERE Name=? AND Organisation_ID=?", (team['name'], session.get("Organisation_ID")))[0][0]['Team_ID']
         for player in team['players']:
+            # "INSERT INTO Players (Name, Details, Team_ID) VALUES (?, ?, ?)", (player['name'], player['details'], teamID)
             db.execute("INSERT INTO Players (Name, Details, Team_ID) VALUES (?, ?, ?)", (player['name'], player['details'], teamID))
 
     return redirect('/')
@@ -262,8 +286,10 @@ def createTournament():
 def Tournament():
 
     tourID = request.args.get('id')
+    # "SELECT * FROM Tournaments WHERE Tournament_ID=?", (tourID,)
     tournament = db.execute("SELECT * FROM Tournaments WHERE Tournament_ID=?", (tourID,))[0][0]
 
+    # "SELECT * FROM Matches WHERE Tournament_ID=? ORDER BY Time DESC;", (tourID)
     matches, status = db.execute("SELECT * FROM Matches WHERE Tournament_ID=? ORDER BY Time DESC;", (tourID))
 
     if not check_args(matches):
@@ -276,8 +302,11 @@ def Tournament():
         t2 = match["Team_Two_ID"]
         tourID = match['Tournament_ID']
 
+        # "SELECT * FROM Teams WHERE Team_ID=?", (t1,)
         Team_One = db.execute("SELECT * FROM Teams WHERE Team_ID=?", (t1,))[0][0]
+        # "SELECT * FROM Teams WHERE Team_ID=?", (t2,)
         Team_Two = db.execute("SELECT * FROM Teams WHERE Team_ID=?", (t2,))[0][0]
+        # "SELECT * FROM Tournaments WHERE Tournament_ID=?", (tourID,)
         Tournament = db.execute("SELECT * FROM Tournaments WHERE Tournament_ID=?", (tourID,))[0][0]["Name"]
             
         Result = match['Result']
@@ -303,12 +332,14 @@ def Tournament():
         })
 
     
+    # "SELECT * FROM Teams WHERE Tournament_ID=?", (tourID,)
     teams, status = db.execute("SELECT * FROM Teams WHERE Tournament_ID=?", (tourID,))
 
     for team in teams:
         enc = base64.b64encode(team['Logo'])
         team['Logo'] = enc.decode('utf-8')
 
+        # "SELECT * FROM Matches WHERE Team_One_ID=? OR Team_Two_ID=?", (team['Team_ID'], team['Team_ID'])
         matches = db.execute("SELECT * FROM Matches WHERE Team_One_ID=? OR Team_Two_ID=?", (team['Team_ID'], team['Team_ID']))[0]
 
         team['Wins'] = 0
@@ -334,7 +365,7 @@ def Tournament():
 @app.route("/Organisation")
 @login_required
 def org():
-
+    # "SELECT * FROM Tournaments INNER JOIN Games ON Tournaments.Game_ID=Games.Game_ID WHERE Organisation_ID=?;", (session.get("Organisation_ID"),)
     tournaments, status = db.execute("SELECT * FROM Tournaments INNER JOIN Games ON Tournaments.Game_ID=Games.Game_ID WHERE Organisation_ID=?;", (session.get("Organisation_ID"),))
 
     if not check_args(tournaments):
@@ -347,6 +378,7 @@ def org():
 def newMatch():
 
     if request.method == "GET":
+        # 'SELECT * FROM Teams WHERE Tournament_ID=?', (request.args.get('id'),)
         teamsList, status = db.execute('SELECT * FROM Teams WHERE Tournament_ID=?', (request.args.get('id'),))
 
         for team in teamsList:
@@ -363,20 +395,29 @@ def newMatch():
     Tid = request.form.get('id')
 
     if results[0:len(request.form.get('Team_One').split('~')[0]) + 1] == request.form.get('Team_One').split('~')[0] + " ":
+        # "SELECT * FROM Teams WHERE Team_ID=?", (t1,)
         tscore = db.execute("SELECT * FROM Teams WHERE Team_ID=?", (t1,))[0][0]["Score"] + 3
+        # 'UPDATE Teams SET Score=? WHERE Team_ID=?', (tscore, t1)
         db.execute('UPDATE Teams SET Score=? WHERE Team_ID=?', (tscore, t1))
     elif results == "Draw":
+        # "SELECT * FROM Teams WHERE Team_ID=?", (t1,)
         tscore = db.execute("SELECT * FROM Teams WHERE Team_ID=?", (t1,))[0][0]["Score"] + 1
+        # 'UPDATE Teams SET Score=? WHERE Team_ID=?', (tscore, t1)
         db.execute('UPDATE Teams SET Score=? WHERE Team_ID=?', (tscore, t1))
+        # "SELECT * FROM Teams WHERE Team_ID=?", (t2,)
         tscore = db.execute("SELECT * FROM Teams WHERE Team_ID=?", (t2,))[0][0]["Score"] + 1
+        # 'UPDATE Teams SET Score=? WHERE Team_ID=?', (tscore, t2)
         db.execute('UPDATE Teams SET Score=? WHERE Team_ID=?', (tscore, t2))
     else:
+        # "SELECT * FROM Teams WHERE Team_ID=?", (t2,)
         tscore = db.execute("SELECT * FROM Teams WHERE Team_ID=?", (t2,))[0][0]["Score"] + 3
+        # 'UPDATE Teams SET Score=? WHERE Team_ID=?', (tscore, t2)
         db.execute('UPDATE Teams SET Score=? WHERE Team_ID=?', (tscore, t2))
     
 
 
     if not check_args(t1, t2, score, results, description):
+        # 'SELECT * FROM Teams WHERE Tournament_ID=?', (Tid,)
         teamsList, status = db.execute('SELECT * FROM Teams WHERE Tournament_ID=?', (Tid,))
 
         for team in teamsList:
@@ -385,7 +426,9 @@ def newMatch():
 
         return render_template('newMatch.html', teamsList=teamsList, error=error("Missing Arguments", 401))
 
+    # "SELECT * FROM Tournaments WHERE Tournament_ID=?", (Tid,)
     Gid = db.execute("SELECT * FROM Tournaments WHERE Tournament_ID=?", (Tid,))[0][0]['Tournament_ID']
+    # "INSERT INTO Matches (Tournament_ID, Team_One_ID, Team_Two_ID, Game_ID, Result, Description, Time, Score) VALUES (?,?,?,?,?,?,?,?)", (Tid, t1, t2, Gid, results, description, int(time.time()*1000), score)
     db.execute("INSERT INTO Matches (Tournament_ID, Team_One_ID, Team_Two_ID, Game_ID, Result, Description, Time, Score) VALUES (?,?,?,?,?,?,?,?)", (Tid, t1, t2, Gid, results, description, int(time.time()*1000), score))
 
     return redirect('/')
